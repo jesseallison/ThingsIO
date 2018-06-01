@@ -1,0 +1,12 @@
+# ToDo
+
+to get started 
+
+- Import Rainbow Hat Androind Things demos
+- try them out
+- Find other open source android things projects 
+- See if other sensors have been incorporated with an android things project
+
+
+
+
