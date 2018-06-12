@@ -9,6 +9,7 @@ import com.google.android.things.contrib.driver.pwmspeaker.Speaker;
 import com.google.android.things.contrib.driver.button.ButtonInputDriver;
 
 import android.media.MediaPlayer;
+import android.content.Context;
 import android.view.KeyEvent;
 import android.app.Activity;
 import android.os.Bundle;
@@ -51,12 +52,17 @@ public class HomeActivity extends Activity {
     private Gpio mLedGpio3;
     private ButtonInputDriver mButtonInputDriver1;
 
+    Context context = this;
+    MediaPlayer mp;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         PeripheralManager pioManager = PeripheralManager.getInstance();
         Log.d(TAG, "Available GPIO: " + pioManager.getGpioList());
+
+        mp = MediaPlayer.create(context, R.raw.cherokee);
 
         try { // Button A
 
@@ -115,7 +121,7 @@ public class HomeActivity extends Activity {
                     boolean buttonValue3 = gpio.getValue();
                     mLedGpio3.setValue(buttonValue3);
 
-                    Speaker buzzer = RainbowHat.openPiezo(); // Play a note on the buzzer.
+                    /*Speaker buzzer = RainbowHat.openPiezo(); // Play a note on the buzzer.
                     buzzer.play(440);
 
                     if (buttonValue3) {
@@ -128,8 +134,7 @@ public class HomeActivity extends Activity {
                      // Stop the buzzer.
                     buzzer.stop();
                     buzzer.close(); // Close the device when done.
-                    buttonValue3 = gpio.getValue();
-                    mLedGpio3.setValue(buttonValue3);
+                    mLedGpio3.setValue(false);*/
                 }
             } catch (IOException e) {
                 Log.w(TAG, "Error reading GPIO");
@@ -145,6 +150,7 @@ public class HomeActivity extends Activity {
         if (keyCode == KeyEvent.KEYCODE_SPACE) {
             try {
                 mLedGpio1.setValue(true); // Turn on the LED
+                mp.start();
                 return true;
             } catch (IOException e) {
                 Log.w(TAG, "Error!", e);
@@ -158,6 +164,7 @@ public class HomeActivity extends Activity {
         if (keyCode == KeyEvent.KEYCODE_SPACE) {
             try {
                 mLedGpio1.setValue(false); // Turn off the LED
+                mp.pause();
                 return true;
             } catch (IOException e) {
                 Log.w(TAG, "Error!", e);
