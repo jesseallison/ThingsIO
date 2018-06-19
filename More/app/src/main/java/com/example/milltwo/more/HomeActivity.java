@@ -76,6 +76,11 @@ public class HomeActivity extends Activity {
                     mp.start();
                 }
             }
+            try {
+                Thread.sleep(1000);
+            } catch(InterruptedException e) {
+                Log.e(TAG, "main thread interrupted!");
+            }
             return true;
         }
     };

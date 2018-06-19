@@ -3,10 +3,8 @@ package com.example.milltwo.pirstuff;
 import com.google.android.things.pio.Gpio;
 import com.google.android.things.pio.GpioCallback;
 import com.google.android.things.pio.PeripheralManager;
-import com.google.android.things.contrib.driver.button.Button;
-import com.google.android.things.contrib.driver.button.ButtonInputDriver;
-
 import android.media.MediaPlayer;
+import android.media.AudioManager;
 import android.content.Context;
 import android.app.Activity;
 import android.os.Bundle;
@@ -41,6 +39,8 @@ public class HomeActivity extends Activity {
 
     Context context = this;
     MediaPlayer mp;
+    AudioManager audioManager;
+    int newVolume;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +50,14 @@ public class HomeActivity extends Activity {
         Log.d(TAG, "Available GPIO: " + pioManager.getGpioList());
 
         mp = MediaPlayer.create(context, R.raw.yazz);
+        audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+        newVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            Log.e(TAG, "Main thread interrupted!");
+        }
 
         try {
             mButtonGpio = pioManager.openGpio(BUTTON_PIN_NAME); // Create GPIO connection.
@@ -57,7 +65,7 @@ public class HomeActivity extends Activity {
             // Configure as an input, trigger events on every change.
             mButtonGpio.setDirection(Gpio.DIRECTION_IN);
             mButtonGpio.setEdgeTriggerType(Gpio.EDGE_BOTH);
-            mButtonGpio.setActiveType(Gpio.ACTIVE_LOW); // Value is true when the pin is LOW
+            mButtonGpio.setActiveType(Gpio.ACTIVE_HIGH); // Value is true when the pin is LOW
             mButtonGpio.registerGpioCallback(mCallback);
         } catch (IOException e) {
             Log.e(TAG, "Error opening GPIO", e);
@@ -72,6 +80,7 @@ public class HomeActivity extends Activity {
                 if (mp.isPlaying()) {
                     mp.pause();
                 } else {
+                    audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, newVolume, AudioManager.FLAG_SHOW_UI);
                     mp.start();
                 }
             }
